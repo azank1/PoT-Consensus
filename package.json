@@ -1,7 +1,7 @@
 {
   "name": "pot-consensus",
   "version": "1.0.0",
-  "description": "**Proof of Task (PoT) Consensus** - AI-powered meta-orchestration framework for multi-agent task coordination.",
+  "description": "Production-ready, AI-powered orchestration framework for intelligent multi-agent task coordination and execution across HTTP, n8n, and MCP protocols",
   "main": "dist/demo.js",
   "type": "commonjs",
   "directories": {
