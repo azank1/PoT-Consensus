@@ -10,7 +10,6 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/demo.ts",
-    "multi-agent": "tsx src/multi-agent-demo.ts",
     "registry": "tsx src/registry/api/server.ts",
     "cli": "tsx src/sdk/cli/index.ts",
     "test": "jest",
