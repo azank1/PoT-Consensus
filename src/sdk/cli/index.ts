@@ -17,18 +17,18 @@
  * Dependencies:
  * - Commander for CLI framework
  * - Orchestrator for execution
- * - Registry API client (axios)
+ * - RegistryClient for API communication
  */
 
 import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
-import axios from 'axios';
 import { Orchestrator } from '../../core/orchestrator/Orchestrator';
 import { AgentManifest } from '../../registry/db/sqlite';
+import { RegistryClient } from '../RegistryClient';
 
 const program = new Command();
-const REGISTRY_URL = process.env.REGISTRY_URL || 'http://localhost:9090';
+const registryClient = new RegistryClient();
 
 program
   .name('pot-cli')
@@ -56,18 +56,13 @@ program
 
       console.log(`📝 Registering agent: ${manifest.id}`);
       
-      const response = await axios.post(`${REGISTRY_URL}/register`, manifest);
+      const response = await registryClient.register(manifest);
       
       console.log('✅ Agent registered successfully');
-      console.log(JSON.stringify(response.data, null, 2));
+      console.log(JSON.stringify(response, null, 2));
       
     } catch (error: any) {
-      if (error.code === 'ECONNREFUSED') {
-        console.error('❌ Error: Registry server is not running');
-        console.error(`   Please start the registry with: npm run registry`);
-      } else {
-        console.error('❌ Error:', error.response?.data?.error || error.message);
-      }
+      console.error('❌ Error:', error.message);
       process.exit(1);
     }
   });
@@ -80,8 +75,8 @@ program
   .description('List all registered agents')
   .action(async () => {
     try {
-      const response = await axios.get(`${REGISTRY_URL}/agents`);
-      const { count, agents } = response.data;
+      const response = await registryClient.list();
+      const { count, agents } = response;
 
       console.log(`\n📋 Registered Agents (${count}):\n`);
       
@@ -100,12 +95,7 @@ program
       });
       
     } catch (error: any) {
-      if (error.code === 'ECONNREFUSED') {
-        console.error('❌ Error: Registry server is not running');
-        console.error(`   Please start the registry with: npm run registry`);
-      } else {
-        console.error('❌ Error:', error.response?.data?.error || error.message);
-      }
+      console.error('❌ Error:', error.message);
       process.exit(1);
     }
   });
@@ -122,7 +112,7 @@ program
       console.log(`\n🎯 Executing goal: "${options.goal}"\n`);
       
       const orchestrator = new Orchestrator();
-      const result = await orchestrator.execute(options.goal);
+      const result = await orchestrator.run(options.goal);
       
       console.log('\n✅ Execution Complete\n');
       console.log('Results:');
@@ -144,21 +134,14 @@ program
   .requiredOption('-i, --id <agentId>', 'Agent ID')
   .action(async (options) => {
     try {
-      const response = await axios.get(`${REGISTRY_URL}/agents/${options.id}`);
+      const response = await registryClient.get(options.id);
       
       console.log('\n📄 Agent Details:\n');
-      console.log(JSON.stringify(response.data, null, 2));
+      console.log(JSON.stringify(response, null, 2));
       console.log('');
       
     } catch (error: any) {
-      if (error.code === 'ECONNREFUSED') {
-        console.error('❌ Error: Registry server is not running');
-        console.error(`   Please start the registry with: npm run registry`);
-      } else if (error.response?.status === 404) {
-        console.error(`❌ Error: Agent '${options.id}' not found`);
-      } else {
-        console.error('❌ Error:', error.response?.data?.error || error.message);
-      }
+      console.error('❌ Error:', error.message);
       process.exit(1);
     }
   });
@@ -172,19 +155,12 @@ program
   .requiredOption('-i, --id <agentId>', 'Agent ID')
   .action(async (options) => {
     try {
-      const response = await axios.delete(`${REGISTRY_URL}/agents/${options.id}`);
+      const response = await registryClient.delete(options.id);
       
-      console.log(`✅ ${response.data.message}`);
+      console.log(`✅ ${response.message}`);
       
     } catch (error: any) {
-      if (error.code === 'ECONNREFUSED') {
-        console.error('❌ Error: Registry server is not running');
-        console.error(`   Please start the registry with: npm run registry`);
-      } else if (error.response?.status === 404) {
-        console.error(`❌ Error: Agent '${options.id}' not found`);
-      } else {
-        console.error('❌ Error:', error.response?.data?.error || error.message);
-      }
+      console.error('❌ Error:', error.message);
       process.exit(1);
     }
   });
@@ -197,19 +173,14 @@ program
   .description('Check registry server health')
   .action(async () => {
     try {
-      const response = await axios.get(`${REGISTRY_URL}/health`);
+      const response = await registryClient.getHealth();
       
       console.log('\n💚 Registry Health:\n');
-      console.log(JSON.stringify(response.data, null, 2));
+      console.log(JSON.stringify(response, null, 2));
       console.log('');
       
     } catch (error: any) {
-      if (error.code === 'ECONNREFUSED') {
-        console.error('❌ Registry server is not running');
-        console.error(`   Please start the registry with: npm run registry`);
-      } else {
-        console.error('❌ Error:', error.message);
-      }
+      console.error('❌ Error:', error.message);
       process.exit(1);
     }
   });

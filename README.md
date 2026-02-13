@@ -1,8 +1,21 @@
 # PoT-Consensus
 
-**Proof of Task (PoT) Consensus** - AI-powered meta-orchestration framework for multi-agent task coordination.
+**Proof of Task (PoT) Consensus** - A production-ready, AI-powered orchestration framework for intelligent multi-agent task coordination and execution.
 
 ---
+
+## 🚀 Overview
+
+PoT-Consensus is an enterprise-grade framework that combines AI-powered task planning with robust multi-protocol execution. It enables seamless coordination of distributed agents across HTTP, n8n workflows, and Model Context Protocol (MCP), providing intelligent task decomposition, automatic retry logic, and comprehensive error handling.
+
+### Key Capabilities
+
+- **🧠 AI-Powered Planning**: Intelligent task decomposition using Claude-Flow SDK
+- **🔄 Robust Execution**: Automatic retry with exponential backoff and timeout handling
+- **🌐 Multi-Protocol Support**: HTTP/REST, n8n workflows, and MCP JSON-RPC
+- **📊 Agent Registry**: RESTful API for dynamic agent management
+- **🛡️ Enterprise-Ready**: Rate limiting, CORS, security headers, and comprehensive validation
+- **🔧 Developer-Friendly**: TypeScript, extensive tests, and detailed documentation
 
 ## 🎯 Architecture Overview
 

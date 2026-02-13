@@ -40,6 +40,11 @@ export interface AppConfig {
   apiEnableCors: boolean;
   apiCorsOrigin: string;
   
+  // Adapters
+  adapterHttpTimeout: number;
+  adapterN8nTimeout: number;
+  adapterMcpTimeout: number;
+  
   // Optional
   apiKey?: string;
   jwtSecret?: string;
@@ -106,6 +111,11 @@ class ConfigManager {
       apiRateLimitMax: this.getEnvNumber('API_RATE_LIMIT_MAX', 100),
       apiEnableCors: this.getEnvBoolean('API_ENABLE_CORS', true),
       apiCorsOrigin: this.getEnv('API_CORS_ORIGIN', '*'),
+      
+      // Adapters
+      adapterHttpTimeout: this.getEnvNumber('ADAPTER_HTTP_TIMEOUT', 10000),
+      adapterN8nTimeout: this.getEnvNumber('ADAPTER_N8N_TIMEOUT', 30000),
+      adapterMcpTimeout: this.getEnvNumber('ADAPTER_MCP_TIMEOUT', 30000),
       
       // Optional
       apiKey: this.getEnv('API_KEY'),
@@ -180,6 +190,27 @@ class ConfigManager {
 
   get(): AppConfig {
     return { ...this.config };
+  }
+
+  // Convenience getters for common config values
+  get API_PORT(): number {
+    return this.config.port;
+  }
+
+  get API_HOST(): string {
+    return this.config.host;
+  }
+
+  get ADAPTER_HTTP_TIMEOUT(): number {
+    return this.config.adapterHttpTimeout;
+  }
+
+  get ADAPTER_N8N_TIMEOUT(): number {
+    return this.config.adapterN8nTimeout;
+  }
+
+  get ADAPTER_MCP_TIMEOUT(): number {
+    return this.config.adapterMcpTimeout;
   }
 
   isDevelopment(): boolean {
