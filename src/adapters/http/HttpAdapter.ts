@@ -6,15 +6,25 @@
 
 import axios, { AxiosRequestConfig } from 'axios';
 import { Logger } from '../../core/logs/Logger';
+import { BaseAdapter, AdapterConfig } from '../IAdapter';
+import { Config } from '../../core/Config';
 
-export class HttpAdapter {
-  async invoke(input: any): Promise<any> {
-    const { endpoint, method = 'GET', headers = {}, body, params } = input;
+export class HttpAdapter extends BaseAdapter {
+  constructor(timeout?: number) {
+    super(timeout || Config.ADAPTER_HTTP_TIMEOUT);
+  }
+
+  async invoke(config: AdapterConfig): Promise<any> {
+    this.validate(config);
+
+    // Support both 'endpoint' and 'url' for backward compatibility
+    const endpoint = config.endpoint || (config as any).url;
+    const { method = 'GET', headers = {}, data, params } = config;
 
     Logger.info(`[HttpAdapter] ${method} ${endpoint}`);
 
     try {
-      const config: AxiosRequestConfig = {
+      const axiosConfig: AxiosRequestConfig = {
         method,
         url: endpoint,
         headers: {
@@ -22,11 +32,11 @@ export class HttpAdapter {
           ...headers
         },
         ...(params && { params }),
-        ...(body && { data: body }),
-        timeout: 10000
+        ...(data && { data }),
+        timeout: config.timeout || this.timeout
       };
 
-      const response = await axios(config);
+      const response = await axios(axiosConfig);
       Logger.info(`[HttpAdapter] ✓ Success`, { status: response.status });
       
       return response.data;

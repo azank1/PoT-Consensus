@@ -7,9 +7,7 @@
 import { Task } from '../planner/ClaudePlanner';
 import { ContextManager } from '../context/ContextManager';
 import { Logger } from '../logs/Logger';
-import { HttpAdapter } from '../../adapters/http/HttpAdapter';
-import { N8nAdapter } from '../../adapters/n8n/N8nAdapter';
-import { McpAdapter } from '../../adapters/mcp/McpAdapter';
+import { AdapterRegistry } from '../../adapters/AdapterRegistry';
 import { RetryConfig, DEFAULT_RETRY_CONFIG, RetryHelper } from './RetryConfig';
 
 export interface ExecutorConfig {
@@ -26,16 +24,12 @@ const DEFAULT_EXECUTOR_CONFIG: ExecutorConfig = {
 
 export class Executor {
   private context: ContextManager;
-  private adapters: Map<string, any>;
+  private adapterRegistry: AdapterRegistry;
   private config: ExecutorConfig;
 
   constructor(config: Partial<ExecutorConfig> = {}) {
     this.context = new ContextManager();
-    this.adapters = new Map([
-      ['http', new HttpAdapter()],
-      ['n8n', new N8nAdapter()],
-      ['mcp', new McpAdapter()]
-    ]);
+    this.adapterRegistry = new AdapterRegistry();
     this.config = { ...DEFAULT_EXECUTOR_CONFIG, ...config };
   }
 
@@ -76,9 +70,9 @@ export class Executor {
     Logger.info(`[Executor] Executing ${task.agent_id}`);
 
     // Get adapter
-    const adapter = this.adapters.get(task.protocol);
+    const adapter = this.adapterRegistry.get(task.protocol);
     if (!adapter) {
-      throw new Error(`Unknown protocol: ${task.protocol}`);
+      throw new Error(`Unknown protocol: ${task.protocol}. Available: ${this.adapterRegistry.getProtocols().join(', ')}`);
     }
 
     // Execute task with retry and timeout
