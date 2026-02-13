@@ -97,29 +97,33 @@ describe('McpAdapter', () => {
     expect(adapter).toBeInstanceOf(McpAdapter);
   });
 
-  it('should use mock implementation when MCP not available', async () => {
+  it('should throw ValidationError when endpoint is missing', async () => {
     const config = {
       method: 'tools/list',
       params: {}
+      // Missing endpoint
     };
 
-    const result = await adapter.invoke(config);
-    
-    expect(result).toHaveProperty('mock');
-    expect(result.mock).toBe(true);
+    await expect(adapter.invoke(config)).rejects.toThrow('Endpoint is required');
   });
 
-  it('should handle different RPC methods', async () => {
-    const configs = [
-      { method: 'tools/list', params: {} },
-      { method: 'resources/list', params: {} },
-      { method: 'prompts/list', params: {} }
-    ];
+  it('should throw ValidationError when method is missing', async () => {
+    const config = {
+      endpoint: 'https://mcp.example.com/rpc',
+      params: {}
+      // Missing method
+    };
 
-    for (const config of configs) {
-      const result = await adapter.invoke(config);
-      expect(result).toBeDefined();
-      expect(result.mock).toBe(true); // Mock implementation
-    }
+    await expect(adapter.invoke(config)).rejects.toThrow('Method is required');
+  });
+
+  it('should throw ValidationError for invalid URL', async () => {
+    const config = {
+      endpoint: 'not-a-valid-url',
+      method: 'test.method',
+      params: {}
+    };
+
+    await expect(adapter.invoke(config)).rejects.toThrow('Invalid endpoint URL');
   });
 });
