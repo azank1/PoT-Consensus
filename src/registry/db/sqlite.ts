@@ -20,4 +20,118 @@
  * - better-sqlite3
  */
 
-// TODO: Implementation placeholder
+import Database from 'better-sqlite3';
+import { Logger } from '../../core/logs/Logger';
+import * as path from 'path';
+import * as fs from 'fs';
+
+export interface AgentManifest {
+  id: string;
+  type: 'http' | 'n8n' | 'mcp';
+  config: any;
+}
+
+export class DatabaseManager {
+  private db: Database.Database;
+
+  constructor(dbPath: string = path.join(__dirname, '../../../data/registry.db')) {
+    // Ensure data directory exists
+    const dataDir = path.dirname(dbPath);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    this.db = new Database(dbPath);
+    this.initSchema();
+    Logger.info(`[DatabaseManager] Database initialized at ${dbPath}`);
+  }
+
+  /**
+   * Initialize database schema
+   */
+  private initSchema(): void {
+    const createTableSQL = `
+      CREATE TABLE IF NOT EXISTS agents (
+        id TEXT PRIMARY KEY,
+        manifest TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    this.db.exec(createTableSQL);
+    Logger.info('[DatabaseManager] Schema initialized');
+  }
+
+  /**
+   * Register or update an agent
+   */
+  registerAgent(id: string, manifest: AgentManifest): void {
+    const manifestJson = JSON.stringify(manifest);
+    const stmt = this.db.prepare(`
+      INSERT INTO agents (id, manifest, updated_at)
+      VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(id) DO UPDATE SET
+        manifest = excluded.manifest,
+        updated_at = CURRENT_TIMESTAMP
+    `);
+    
+    stmt.run(id, manifestJson);
+    Logger.info(`[DatabaseManager] Agent registered: ${id}`);
+  }
+
+  /**
+   * Get agent by ID
+   */
+  getAgent(id: string): AgentManifest | null {
+    const stmt = this.db.prepare('SELECT manifest FROM agents WHERE id = ?');
+    const row = stmt.get(id) as { manifest: string } | undefined;
+    
+    if (!row) {
+      return null;
+    }
+    
+    return JSON.parse(row.manifest);
+  }
+
+  /**
+   * Get all registered agents
+   */
+  getAllAgents(): AgentManifest[] {
+    const stmt = this.db.prepare('SELECT manifest FROM agents ORDER BY created_at DESC');
+    const rows = stmt.all() as { manifest: string }[];
+    
+    return rows.map(row => JSON.parse(row.manifest));
+  }
+
+  /**
+   * Delete agent by ID
+   */
+  deleteAgent(id: string): boolean {
+    const stmt = this.db.prepare('DELETE FROM agents WHERE id = ?');
+    const result = stmt.run(id);
+    
+    const deleted = result.changes > 0;
+    if (deleted) {
+      Logger.info(`[DatabaseManager] Agent deleted: ${id}`);
+    }
+    
+    return deleted;
+  }
+
+  /**
+   * Get agent count
+   */
+  getAgentCount(): number {
+    const stmt = this.db.prepare('SELECT COUNT(*) as count FROM agents');
+    const row = stmt.get() as { count: number };
+    return row.count;
+  }
+
+  /**
+   * Close database connection
+   */
+  close(): void {
+    this.db.close();
+    Logger.info('[DatabaseManager] Database connection closed');
+  }
+}

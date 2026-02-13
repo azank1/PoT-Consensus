@@ -38,6 +38,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "claude-flow": "file:vendor/claude-flow"
+    "claude-flow": "file:vendor/claude-flow",
+    "commander": "^14.0.3"
   }
 }
