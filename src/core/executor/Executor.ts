@@ -31,7 +31,7 @@ export class Executor {
 
   constructor(config: Partial<ExecutorConfig> = {}) {
     this.context = new ContextManager();
-    this.adapters = new Map([
+    this.adapters = new Map<string, any>([
       ['http', new HttpAdapter()],
       ['n8n', new N8nAdapter()],
       ['mcp', new McpAdapter()]

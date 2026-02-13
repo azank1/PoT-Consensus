@@ -61,7 +61,7 @@ describe('End-to-End Integration Tests', () => {
           agent_id: 'fetch-user',
           protocol: 'http' as const,
           input: {
-            url: 'https://api.example.com/users/{{user_id}}',
+            endpoint: 'https://api.example.com/users/{{user_id}}',
             method: 'GET'
           }
         },
@@ -140,7 +140,7 @@ describe('End-to-End Integration Tests', () => {
           initialDelay: 50, // Shorter for faster tests
           maxDelay: 200,
           backoffMultiplier: 2,
-          retryableErrors: ['NETWORK_ERROR', 'Invalid URL']
+          retryableErrors: ['NETWORK_ERROR', 'getaddrinfo', 'ECONNREFUSED']
         }
       });
 
@@ -150,7 +150,7 @@ describe('End-to-End Integration Tests', () => {
           agent_id: 'failing-task',
           protocol: 'http' as const,
           input: {
-            url: 'not-a-valid-url',
+            endpoint: 'http://localhost:99999/nonexistent', // Valid URL but unreachable
             method: 'GET'
           }
         }
@@ -178,7 +178,7 @@ describe('End-to-End Integration Tests', () => {
           agent_id: 'slow-task',
           protocol: 'http' as const,
           input: {
-            url: 'https://httpbin.org/delay/5',
+            endpoint: 'https://httpbin.org/delay/5',
             method: 'GET'
           },
           timeout: 100
@@ -204,13 +204,13 @@ describe('End-to-End Integration Tests', () => {
           id: 'http-task',
           agent_id: 'http-agent',
           protocol: 'http' as const,
-          input: { url: 'https://api.example.com', method: 'GET' }
+          input: { endpoint: 'https://api.example.com', method: 'GET' }
         },
         {
           id: 'n8n-task',
           agent_id: 'n8n-agent',
           protocol: 'n8n' as const,
-          input: { webhookUrl: 'https://n8n.example.com/webhook', data: {} }
+          input: { endpoint: 'https://n8n.example.com/webhook', data: {} }
         },
         {
           id: 'mcp-task',
@@ -242,13 +242,13 @@ describe('End-to-End Integration Tests', () => {
           id: 'task1',
           agent_id: 'failing-task',
           protocol: 'http' as const,
-          input: { url: 'invalid-url', method: 'GET' }
+          input: { endpoint: 'invalid-url', method: 'GET' }
         },
         {
           id: 'task2',
           agent_id: 'never-runs',
           protocol: 'http' as const,
-          input: { url: 'https://api.example.com', method: 'GET' }
+          input: { endpoint: 'https://api.example.com', method: 'GET' }
         }
       ];
 
@@ -272,13 +272,13 @@ describe('End-to-End Integration Tests', () => {
           id: 'task1',
           agent_id: 'failing-task',
           protocol: 'http' as const,
-          input: { url: 'invalid-url', method: 'GET' }
+          input: { endpoint: 'invalid-url', method: 'GET' }
         },
         {
           id: 'task2',
           agent_id: 'successful-task',
           protocol: 'http' as const,
-          input: { url: 'https://api.example.com', method: 'GET' }
+          input: { endpoint: 'https://api.example.com', method: 'GET' }
         }
       ];
 

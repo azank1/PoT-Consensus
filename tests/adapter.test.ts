@@ -28,7 +28,7 @@ describe('HttpAdapter', () => {
   it('should handle invoke with GET method', async () => {
     const config = {
       method: 'GET',
-      url: 'https://jsonplaceholder.typicode.com/posts/1',
+      endpoint: 'https://jsonplaceholder.typicode.com/posts/1',
       headers: {}
     };
 
@@ -36,7 +36,7 @@ describe('HttpAdapter', () => {
     try {
       await adapter.invoke(config);
     } catch (error: any) {
-      // Expected to fail due to network restrictions or invalid URL
+      // Expected to fail due to network restrictions
       expect(error.message).toBeDefined();
       expect(typeof error.message).toBe('string');
     }
@@ -45,7 +45,7 @@ describe('HttpAdapter', () => {
   it('should handle invoke with POST method', async () => {
     const config = {
       method: 'POST',
-      url: 'https://jsonplaceholder.typicode.com/posts',
+      endpoint: 'https://jsonplaceholder.typicode.com/posts',
       headers: { 'Content-Type': 'application/json' },
       body: { title: 'test', body: 'test content' }
     };

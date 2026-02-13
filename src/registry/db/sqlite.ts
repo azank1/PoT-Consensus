@@ -22,6 +22,7 @@
 
 import Database from 'better-sqlite3';
 import { Logger } from '../../core/logs/Logger';
+import { DatabaseError } from '../../core/errors/CustomErrors';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -89,24 +90,69 @@ export class DatabaseManager {
    * Get agent by ID
    */
   getAgent(id: string): AgentManifest | null {
-    const stmt = this.db.prepare('SELECT manifest FROM agents WHERE id = ?');
-    const row = stmt.get(id) as { manifest: string } | undefined;
-    
-    if (!row) {
-      return null;
+    try {
+      const stmt = this.db.prepare('SELECT manifest FROM agents WHERE id = ?');
+      const row = stmt.get(id) as { manifest: string } | undefined;
+      
+      if (!row) {
+        return null;
+      }
+      
+      try {
+        return JSON.parse(row.manifest);
+      } catch (parseError: any) {
+        Logger.error(`[DatabaseManager] Failed to parse manifest for agent ${id}`, {
+          error: parseError.message
+        });
+        throw new DatabaseError(
+          `Failed to parse manifest for agent ${id}: ${parseError.message}`,
+          { agentId: id }
+        );
+      }
+    } catch (error: any) {
+      if (error instanceof DatabaseError) {
+        throw error;
+      }
+      Logger.error(`[DatabaseManager] Failed to get agent ${id}`, {
+        error: error.message
+      });
+      throw new DatabaseError(
+        `Failed to get agent ${id}: ${error.message}`,
+        { agentId: id }
+      );
     }
-    
-    return JSON.parse(row.manifest);
   }
 
   /**
    * Get all registered agents
    */
   getAllAgents(): AgentManifest[] {
-    const stmt = this.db.prepare('SELECT manifest FROM agents ORDER BY created_at DESC');
-    const rows = stmt.all() as { manifest: string }[];
-    
-    return rows.map(row => JSON.parse(row.manifest));
+    try {
+      const stmt = this.db.prepare('SELECT manifest FROM agents ORDER BY created_at DESC');
+      const rows = stmt.all() as { manifest: string }[];
+      
+      const agents: AgentManifest[] = [];
+      for (const row of rows) {
+        try {
+          agents.push(JSON.parse(row.manifest));
+        } catch (parseError: any) {
+          Logger.warn(`[DatabaseManager] Skipping corrupted manifest`, {
+            error: parseError.message
+          });
+          // Skip corrupted entries instead of failing the entire operation
+          continue;
+        }
+      }
+      
+      return agents;
+    } catch (error: any) {
+      Logger.error(`[DatabaseManager] Failed to get all agents`, {
+        error: error.message
+      });
+      throw new DatabaseError(
+        `Failed to get all agents: ${error.message}`
+      );
+    }
   }
 
   /**
