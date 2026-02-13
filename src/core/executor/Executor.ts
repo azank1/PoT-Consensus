@@ -124,11 +124,17 @@ export class Executor {
         hasError = true;
         Logger.error(`[Executor] ✗ ${task.agent_id} failed after all retries`, { error: error.message });
         
-        results[task.agent_id] = { 
+        const errorResult: any = { 
           error: error.message,
-          stack: error.stack,
           timestamp: new Date().toISOString()
         };
+
+        // Only include stack trace in development
+        if (process.env.NODE_ENV === 'development') {
+          errorResult.stack = error.stack;
+        }
+
+        results[task.agent_id] = errorResult;
 
         // Stop execution if continueOnError is false
         if (!this.config.continueOnError) {

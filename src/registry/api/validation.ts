@@ -32,10 +32,13 @@ export function validateAgentManifest(req: Request, res: Response, next: NextFun
     errors.push({ field: 'type', message: 'Agent type is required and must be a string' });
   }
 
-  if (!manifest.name || typeof manifest.name !== 'string') {
-    errors.push({ field: 'name', message: 'Agent name is required and must be a string' });
-  } else if (manifest.name.length < 1 || manifest.name.length > 200) {
-    errors.push({ field: 'name', message: 'Agent name must be between 1 and 200 characters' });
+  // Optional but validated if present
+  if (manifest.name !== undefined) {
+    if (typeof manifest.name !== 'string') {
+      errors.push({ field: 'name', message: 'Name must be a string' });
+    } else if (manifest.name.length < 1 || manifest.name.length > 200) {
+      errors.push({ field: 'name', message: 'Name must be between 1 and 200 characters' });
+    }
   }
 
   // Optional but validated if present
