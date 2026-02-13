@@ -1,0 +1,48 @@
+{
+  "id": "agent.frontend.lead",
+  "name": "Lead Frontend & UI/UX Agent",
+  "version": "1.0.0",
+  "type": "mcp",
+  "role": "frontend_engineering",
+  "description": "Lead frontend engineer and UI/UX specialist for user interface design and implementation",
+  "responsibilities": [
+    "Design user interfaces and user experiences",
+    "Implement responsive web applications",
+    "Component architecture and design systems",
+    "Accessibility (WCAG 2.1 AA compliance)",
+    "Performance optimization (Core Web Vitals)",
+    "Cross-browser compatibility",
+    "State management",
+    "Frontend testing (unit, integration, e2e)",
+    "Design system documentation"
+  ],
+  "capabilities": {
+    "languages": ["TypeScript", "JavaScript", "HTML5", "CSS3"],
+    "frameworks": ["React", "Vue", "Angular", "Next.js"],
+    "ui_libraries": ["Material-UI", "Tailwind CSS", "Ant Design"],
+    "design_tools": ["Figma", "Adobe XD", "Sketch"],
+    "testing": ["Jest", "React Testing Library", "Cypress"],
+    "principles": ["Mobile-first", "Responsive Design", "Progressive Enhancement"]
+  },
+  "config": {
+    "endpoint": "http://localhost:8083/mcp",
+    "protocol": "mcp",
+    "methods": [
+      "design_ui",
+      "implement_component",
+      "create_design_system",
+      "accessibility_audit",
+      "performance_audit"
+    ]
+  },
+  "design_standards": {
+    "accessibility": "WCAG 2.1 AA",
+    "performance": {
+      "lcp": "< 2.5s",
+      "fid": "< 100ms",
+      "cls": "< 0.1"
+    },
+    "browser_support": ["Chrome", "Firefox", "Safari", "Edge"]
+  },
+  "priority": "high"
+}

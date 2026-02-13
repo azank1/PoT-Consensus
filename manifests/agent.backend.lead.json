@@ -1,0 +1,45 @@
+{
+  "id": "agent.backend.lead",
+  "name": "Lead Backend Engineer Agent",
+  "version": "1.0.0",
+  "type": "mcp",
+  "role": "backend_engineering",
+  "description": "Lead backend engineer specializing in API design, database architecture, and server-side logic",
+  "responsibilities": [
+    "Design and implement REST APIs",
+    "Database schema design and optimization",
+    "Backend architecture and microservices",
+    "Authentication and authorization",
+    "Data validation and sanitization",
+    "Server-side business logic",
+    "API documentation (OpenAPI/Swagger)",
+    "Performance optimization",
+    "Error handling and logging"
+  ],
+  "capabilities": {
+    "languages": ["TypeScript", "Node.js"],
+    "frameworks": ["Express", "NestJS"],
+    "databases": ["SQLite", "PostgreSQL", "MongoDB"],
+    "api_design": ["REST", "GraphQL", "gRPC"],
+    "tools": ["Prisma", "TypeORM", "Sequelize"],
+    "patterns": ["MVC", "Repository", "Service Layer", "CQRS"]
+  },
+  "config": {
+    "endpoint": "http://localhost:8082/mcp",
+    "protocol": "mcp",
+    "methods": [
+      "design_api",
+      "implement_service",
+      "optimize_database",
+      "review_backend_code",
+      "create_api_docs"
+    ]
+  },
+  "expertise": {
+    "api_design": "expert",
+    "database_design": "expert",
+    "security": "advanced",
+    "scalability": "advanced"
+  },
+  "priority": "critical"
+}

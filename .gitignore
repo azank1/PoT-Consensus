@@ -77,3 +77,7 @@ ui/
 
 # Keep vendor but ignore if needed later
 # vendor/
+dist
+tests/**/*.js
+tests/**/*.d.ts
+tests/**/*.map

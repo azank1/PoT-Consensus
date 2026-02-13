@@ -1,0 +1,45 @@
+{
+  "id": "agent.devops.lead",
+  "name": "Lead DevOps & Infrastructure Agent",
+  "version": "1.0.0",
+  "type": "mcp",
+  "role": "devops_infrastructure",
+  "description": "DevOps and infrastructure specialist for CI/CD, deployment, monitoring, and infrastructure as code",
+  "responsibilities": [
+    "CI/CD pipeline design and implementation",
+    "Container orchestration (Docker, Kubernetes)",
+    "Infrastructure as Code (Terraform, CloudFormation)",
+    "Monitoring and observability",
+    "Automated deployment strategies",
+    "Security and compliance",
+    "Disaster recovery planning",
+    "Performance monitoring",
+    "Log aggregation and analysis"
+  ],
+  "capabilities": {
+    "platforms": ["AWS", "Azure", "GCP", "DigitalOcean"],
+    "containers": ["Docker", "Kubernetes", "Docker Compose"],
+    "ci_cd": ["GitHub Actions", "GitLab CI", "Jenkins", "CircleCI"],
+    "iac": ["Terraform", "Ansible", "Pulumi"],
+    "monitoring": ["Prometheus", "Grafana", "DataDog", "New Relic"],
+    "logging": ["ELK Stack", "Splunk", "CloudWatch"]
+  },
+  "config": {
+    "endpoint": "http://localhost:8085/mcp",
+    "protocol": "mcp",
+    "methods": [
+      "deploy_application",
+      "setup_monitoring",
+      "configure_ci_cd",
+      "scale_infrastructure",
+      "backup_restore"
+    ]
+  },
+  "deployment_strategies": [
+    "Blue-Green Deployment",
+    "Canary Deployment",
+    "Rolling Updates",
+    "Feature Flags"
+  ],
+  "priority": "critical"
+}
