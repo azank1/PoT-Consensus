@@ -1,0 +1,42 @@
+{
+  "id": "agent.qa.architect",
+  "name": "QA Architect & Tester Agent",
+  "version": "1.0.0",
+  "type": "mcp",
+  "role": "quality_assurance",
+  "description": "Specialized agent for quality assurance architecture, test design, and comprehensive testing strategies",
+  "responsibilities": [
+    "Design comprehensive test strategies",
+    "Create test plans and test cases",
+    "Perform automated and manual testing",
+    "Execute integration and end-to-end tests",
+    "Review code for testability",
+    "Maintain test coverage standards (>80%)",
+    "Validate security requirements",
+    "Performance and load testing",
+    "Bug tracking and regression testing"
+  ],
+  "capabilities": {
+    "testing_frameworks": ["jest", "mocha", "cypress", "playwright"],
+    "test_types": ["unit", "integration", "e2e", "performance", "security", "regression"],
+    "tools": ["jest", "codecov", "snyk", "k6", "artillery"],
+    "metrics": {
+      "code_coverage_target": 80,
+      "bug_detection_rate": "high",
+      "test_automation_rate": 90
+    }
+  },
+  "config": {
+    "endpoint": "http://localhost:8081/mcp",
+    "protocol": "mcp",
+    "methods": [
+      "run_tests",
+      "generate_test_plan",
+      "analyze_coverage",
+      "security_scan",
+      "performance_test"
+    ]
+  },
+  "dependencies": ["agent.backend.lead", "agent.frontend.lead"],
+  "priority": "high"
+}
