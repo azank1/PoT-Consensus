@@ -7,6 +7,7 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { Logger } from './logs/Logger';
+import { ConfigurationError } from './errors/CustomErrors';
 
 // Load environment variables
 dotenv.config();
@@ -174,7 +175,10 @@ class ConfigManager {
     if (errors.length > 0) {
       console.error('Configuration validation errors:');
       errors.forEach(error => console.error(`  - ${error}`));
-      throw new Error('Configuration validation failed');
+      throw new ConfigurationError(
+        'Configuration validation failed',
+        { errors }
+      );
     }
   }
 

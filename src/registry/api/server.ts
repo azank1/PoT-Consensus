@@ -24,6 +24,7 @@ import { DatabaseManager, AgentManifest } from '../db/sqlite';
 import { Logger } from '../../core/logs/Logger';
 import { Config } from '../../core/Config';
 import { validateAgentManifest, validateAgentId } from './validation';
+import { requestTracking } from './requestTracking';
 
 export class RegistryServer {
   private app: express.Application;
@@ -61,6 +62,9 @@ export class RegistryServer {
     this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+    // Request tracking and logging
+    this.app.use(requestTracking);
+
     // Rate limiting
     const limiter = rateLimit({
       windowMs: config.apiRateLimitWindow * 60 * 1000,
@@ -80,20 +84,6 @@ export class RegistryServer {
       }
     });
     this.app.use(limiter);
-
-    // Request logging with timing
-    this.app.use((req, _res, next) => {
-      const start = Date.now();
-      Logger.info(`[RegistryAPI] ${req.method} ${req.path}`);
-      
-      // Log response time
-      _res.on('finish', () => {
-        const duration = Date.now() - start;
-        Logger.debug(`[RegistryAPI] ${req.method} ${req.path} - ${_res.statusCode} (${duration}ms)`);
-      });
-      
-      next();
-    });
 
     // Security headers
     this.app.use((_req, res, next) => {
