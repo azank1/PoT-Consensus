@@ -12,6 +12,7 @@ export interface Task {
   protocol: 'http' | 'n8n' | 'mcp';
   input: any;
   dependencies?: string[];
+  timeout?: number; // Task-specific timeout in milliseconds
 }
 
 export class ClaudePlanner {
