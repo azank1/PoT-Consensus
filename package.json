@@ -12,7 +12,9 @@
     "dev": "tsx src/demo.ts",
     "registry": "tsx src/registry/api/server.ts",
     "cli": "tsx src/sdk/cli/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -28,16 +30,20 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.7.0",
     "axios": "^1.12.2",
     "better-sqlite3": "^12.4.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "claude-flow": "file:vendor/claude-flow"
+    "claude-flow": "file:vendor/claude-flow",
+    "commander": "^14.0.3"
   }
 }
