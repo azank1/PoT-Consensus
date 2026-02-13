@@ -1,0 +1,43 @@
+{
+  "id": "agent.security.specialist",
+  "name": "Security Specialist Agent",
+  "version": "1.0.0",
+  "type": "mcp",
+  "role": "security",
+  "description": "Security specialist for vulnerability assessment, penetration testing, and security best practices",
+  "responsibilities": [
+    "Security vulnerability assessment",
+    "Penetration testing",
+    "Code security review",
+    "Dependency vulnerability scanning",
+    "OWASP Top 10 compliance",
+    "Security policy implementation",
+    "Encryption and key management",
+    "Access control and authentication",
+    "Security incident response"
+  ],
+  "capabilities": {
+    "security_frameworks": ["OWASP", "NIST", "CIS"],
+    "tools": ["Snyk", "SonarQube", "OWASP ZAP", "Burp Suite"],
+    "testing": ["SAST", "DAST", "Dependency Scanning", "Container Scanning"],
+    "compliance": ["GDPR", "SOC2", "HIPAA", "PCI-DSS"]
+  },
+  "config": {
+    "endpoint": "http://localhost:8086/mcp",
+    "protocol": "mcp",
+    "methods": [
+      "security_scan",
+      "vulnerability_assessment",
+      "penetration_test",
+      "compliance_check",
+      "security_review"
+    ]
+  },
+  "security_standards": {
+    "owasp_top_10": "compliant",
+    "dependency_vulnerabilities": "none_high",
+    "code_quality": "A",
+    "encryption": "AES-256"
+  },
+  "priority": "critical"
+}
