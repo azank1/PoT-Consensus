@@ -89,8 +89,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run linter (when available)
-        run: npm run lint || echo "No lint script configured yet"
+      - name: Run linter
+        run: npm run lint
         continue-on-error: true
 
   security:
