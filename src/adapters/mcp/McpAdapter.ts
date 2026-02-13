@@ -8,9 +8,9 @@ import axios from 'axios';
 import { Logger } from '../../core/logs/Logger';
 import { AdapterError, ValidationError } from '../../core/errors/CustomErrors';
 import { CircuitBreaker } from '../../core/resilience/CircuitBreaker';
+import * as crypto from 'crypto';
 
 export class McpAdapter {
-  private requestId = 0;
   private circuitBreaker: CircuitBreaker;
 
   constructor() {
@@ -19,6 +19,13 @@ export class McpAdapter {
       timeout: 10000, // 10 seconds
       monitoringPeriod: 60000
     });
+  }
+
+  /**
+   * Generate a unique JSON-RPC request ID using crypto
+   */
+  private generateRequestId(): string {
+    return crypto.randomBytes(8).toString('hex');
   }
 
   async invoke(input: any): Promise<any> {
@@ -50,7 +57,7 @@ export class McpAdapter {
       jsonrpc: '2.0',
       method,
       params,
-      id: ++this.requestId
+      id: this.generateRequestId()
     };
 
     try {

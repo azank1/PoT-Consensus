@@ -266,18 +266,67 @@ export class RegistryServer {
    * Graceful shutdown
    */
   async shutdown(): Promise<void> {
+    Logger.info('[RegistryAPI] Initiating graceful shutdown');
+
     return new Promise((resolve) => {
-      if (this.server) {
-        this.server.close(() => {
-          this.db.close();
-          Logger.info('[RegistryAPI] Server shutdown complete');
-          resolve();
-        });
-      } else {
+      if (!this.server) {
+        Logger.info('[RegistryAPI] Server not running, closing database');
         this.db.close();
-        Logger.info('[RegistryAPI] Database closed');
         resolve();
+        return;
       }
+
+      let shutdownComplete = false;
+
+      // Force shutdown after timeout
+      const forceShutdownTimer = setTimeout(() => {
+        if (!shutdownComplete) {
+          Logger.warn('[RegistryAPI] Forcing shutdown after timeout');
+          this.db.close();
+          shutdownComplete = true;
+          resolve();
+        }
+      }, 10000); // 10 second timeout
+
+      // Stop accepting new connections
+      this.server.close((err?: Error) => {
+        if (shutdownComplete) return; // Already resolved by timeout
+        
+        clearTimeout(forceShutdownTimer);
+        shutdownComplete = true;
+
+        if (err) {
+          Logger.error('[RegistryAPI] Error during server shutdown', { error: err.message });
+        } else {
+          Logger.info('[RegistryAPI] Server stopped accepting new connections');
+        }
+
+        // Close database connection
+        try {
+          this.db.close();
+          Logger.info('[RegistryAPI] Database connection closed');
+        } catch (dbErr: any) {
+          Logger.error('[RegistryAPI] Error closing database', { error: dbErr.message });
+        }
+
+        Logger.info('[RegistryAPI] Graceful shutdown complete');
+        resolve();
+      });
+    });
+  }
+
+  /**
+   * Setup signal handlers for graceful shutdown
+   */
+  setupSignalHandlers(): void {
+    const signals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT'];
+    
+    signals.forEach(signal => {
+      process.on(signal, async () => {
+        Logger.info(`[RegistryAPI] Received ${signal}, shutting down gracefully`);
+        await this.shutdown();
+        process.exit(0);
+      });
     });
   }
 }
