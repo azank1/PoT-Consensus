@@ -19,6 +19,10 @@ build/
 coverage/
 *.test.db
 test-registry.db
+tests/**/*.js
+tests/**/*.d.ts
+tests/**/*.js.map
+tests/**/*.d.ts.map
 
 # Environment
 .env

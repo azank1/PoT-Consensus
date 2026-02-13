@@ -25,9 +25,10 @@ export class ContextManager {
 
   resolveTemplate(template: string | object): any {
     if (typeof template === 'string') {
-      // Replace {{variable}} patterns
+      // Replace {{variable}} patterns with support for nested properties
       return template.replace(/\{\{([^}]+)\}\}/g, (match, key) => {
-        const value = this.get(key.trim());
+        const trimmedKey = key.trim();
+        const value = this.getNestedValue(trimmedKey);
         return value !== undefined ? String(value) : match;
       });
     }
@@ -42,6 +43,28 @@ export class ContextManager {
     }
 
     return template;
+  }
+
+  /**
+   * Get nested value from context using dot notation
+   * Example: getNestedValue('user.profile.name') returns context.get('user').profile.name
+   * But if 'user.profile.name' exists as a direct key, return that instead
+   */
+  private getNestedValue(key: string): any {
+    // First, check if the exact key exists (for keys like 'task-1.result')
+    if (this.has(key)) {
+      return this.get(key);
+    }
+    
+    // Otherwise, treat as nested property access
+    const parts = key.split('.');
+    let value = this.get(parts[0]);
+    
+    for (let i = 1; i < parts.length && value !== undefined; i++) {
+      value = value[parts[i]];
+    }
+    
+    return value;
   }
 
   dump(): Record<string, any> {

@@ -28,6 +28,12 @@ import * as fs from 'fs';
 export interface AgentManifest {
   id: string;
   type: 'http' | 'n8n' | 'mcp';
+  name?: string;
+  description?: string;
+  protocol?: string;
+  endpoint?: string;
+  capabilities?: string[];
+  tags?: string[];
   config: any;
 }
 
